@@ -4,8 +4,19 @@ const {
 const {
   intializePaymentChannel,
   verifyTransactionStatus,
+  createWallet,
+  updateWalletBalance,
 } = require("../services/wallet");
 const { responseHandler } = require("../utils/responseHandler");
+
+const createWalletDemo = async (req, res) => {
+  const check = await createWallet(req.body.userId);
+  console.log(req.body.userId);
+  if (check[0]) {
+    return responseHandler(res, "created", 201, false, check[1]);
+  }
+  return responseHandler(res, check[1], 400, true, "");
+};
 
 const intializePayment = async (req, res) => {
   const { details } = await intializePaymentValidation(req.body);
@@ -44,27 +55,34 @@ const verifyPayment = async (req, res) => {
     );
   }
   const { reference } = req.query;
-  const checkTransactionStatus = await verifyTransactionStatus(reference);
-  console.log(checkTransactionStatus, "controller here");
-  if (checkTransactionStatus[0]) {
+  const checkTransactionDetails = await verifyTransactionStatus(reference);
+
+  if (checkTransactionDetails[0]) {
+    if (checkTransactionDetails[1].status === "success") {
+      await updateWalletBalance(
+        checkTransactionDetails[1].data.customer.email,
+        checkTransactionDetails[1].data.amount
+      );
+    }
     return responseHandler(
       res,
-      "Transaction status rertrieved succesful",
+      checkTransactionDetails[1].message,
       200,
       false,
-      checkTransactionStatus[1]
+      checkTransactionDetails[1].data
     );
   }
   return responseHandler(
     res,
-    "Transaction status retrieval unsuccesful",
+    checkTransactionDetails[1].message,
     400,
     true,
-    checkTransactionStatus[1]
+    checkTransactionDetails[1].data
   );
 };
 
 module.exports = {
   intializePayment,
   verifyPayment,
+  createWalletDemo,
 };
