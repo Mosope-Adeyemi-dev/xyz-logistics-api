@@ -9,15 +9,6 @@ const {
 } = require("../services/wallet");
 const { responseHandler } = require("../utils/responseHandler");
 
-// const createWalletDemo = async (req, res) => {
-//   const check = await createWallet(req.body.userId);
-//   console.log(req.body.userId);
-//   if (check[0]) {
-//     return responseHandler(res, "created", 201, false, check[1]);
-//   }
-//   return responseHandler(res, check[1], 400, true, "");
-// };
-
 const intializePayment = async (req, res) => {
   const { details } = await intializePaymentValidation(req.body);
   if (details) {
