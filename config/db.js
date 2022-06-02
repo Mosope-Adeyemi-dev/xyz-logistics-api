@@ -1,13 +1,18 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
+const uri =
+  process.env.NODE_ENV === 'production'
+    ? process.env.MONGODB_URI_CLOUD
+    : process.env.MONGODB_URI;
 
 const connectDB = async () => {
   await mongoose
-    .connect(process.env.MONGODB_URI, {
+    .connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
     .then(() => {
-      console.log("database connected");
+      console.log('database connected');
     })
     .catch((err) => {
       throw new Error(err);
