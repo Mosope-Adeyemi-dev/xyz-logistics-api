@@ -4,19 +4,19 @@ const {
 const {
   intializePaymentChannel,
   verifyTransactionStatus,
-  createWallet,
-  updateWalletBalance,
+  storeTransaction,
+  checkTransactionExists,
 } = require("../services/wallet");
 const { responseHandler } = require("../utils/responseHandler");
 
-const createWalletDemo = async (req, res) => {
-  const check = await createWallet(req.body.userId);
-  console.log(req.body.userId);
-  if (check[0]) {
-    return responseHandler(res, "created", 201, false, check[1]);
-  }
-  return responseHandler(res, check[1], 400, true, "");
-};
+// const createWalletDemo = async (req, res) => {
+//   const check = await createWallet(req.body.userId);
+//   console.log(req.body.userId);
+//   if (check[0]) {
+//     return responseHandler(res, "created", 201, false, check[1]);
+//   }
+//   return responseHandler(res, check[1], 400, true, "");
+// };
 
 const intializePayment = async (req, res) => {
   const { details } = await intializePaymentValidation(req.body);
@@ -58,10 +58,16 @@ const verifyPayment = async (req, res) => {
   const checkTransactionDetails = await verifyTransactionStatus(reference);
 
   if (checkTransactionDetails[0]) {
-    if (checkTransactionDetails[1].status === "success") {
-      await updateWalletBalance(
+    const isTransactionSaved = await checkTransactionExists(
+      checkTransactionDetails[1].data.reference
+    );
+    if (
+      checkTransactionDetails[1].data.status == "success" &&
+      !isTransactionSaved
+    ) {
+      await storeTransaction(
         checkTransactionDetails[1].data.customer.email,
-        checkTransactionDetails[1].data.amount
+        checkTransactionDetails[1].data
       );
     }
     return responseHandler(
@@ -69,7 +75,10 @@ const verifyPayment = async (req, res) => {
       checkTransactionDetails[1].message,
       200,
       false,
-      checkTransactionDetails[1].data
+      {
+        transactionStatus: checkTransactionDetails[1].data.status,
+        reference: checkTransactionDetails[1].data.reference,
+      }
     );
   }
   return responseHandler(
@@ -84,5 +93,4 @@ const verifyPayment = async (req, res) => {
 module.exports = {
   intializePayment,
   verifyPayment,
-  createWalletDemo,
 };

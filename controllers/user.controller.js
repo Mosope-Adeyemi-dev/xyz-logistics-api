@@ -1,8 +1,8 @@
-const User = require('../models/user.model');
-const { translateError } = require('../utils/mongo_helper');
-const { comparePassword, hashPassword } = require('../utils/bcrypt');
-const cloudinaryUpload = require('../utils/cloudinary');
-const { responseHandler } = require('../utils/responseHandler');
+const User = require("../models/user.model");
+const { translateError } = require("../utils/mongo_helper");
+const { comparePassword, hashPassword } = require("../utils/bcrypt");
+const cloudinaryUpload = require("../utils/cloudinary");
+const { responseHandler } = require("../utils/responseHandler");
 
 exports.userProfile = async (req, res) => {
   try {
@@ -11,12 +11,12 @@ exports.userProfile = async (req, res) => {
       { password: 0, reset_password_pin: 0 }
     ).exec();
 
-    if (!user) return responseHandler(res, 'No user data!', 400);
+    if (!user) return responseHandler(res, "No user data!", 400);
 
-    responseHandler(res, '', 200, false, user);
+    responseHandler(res, "", 200, false, user);
   } catch (error) {
     console.log(error);
-    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+    return responseHandler(res, "Something went wrong! Please try again.", 500);
   }
 };
 
@@ -24,16 +24,16 @@ exports.deleteAccount = (req, res) => {
   try {
     const user = User.findOne({ _id: req.user._id }).exec((err, user) => {
       if (err || !user) {
-        return responseHandler(res, 'User does not exist!', 400);
+        return responseHandler(res, "User does not exist!", 400);
       }
 
       User.deleteOne({ _id: req.user._id }).exec();
     });
 
-    responseHandler(res, 'Account deleted successfully.', 200, false);
+    responseHandler(res, "Account deleted successfully.", 200, false);
   } catch (error) {
     console.log(error);
-    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+    return responseHandler(res, "Something went wrong! Please try again.", 500);
   }
 };
 
@@ -43,10 +43,10 @@ exports.updateAccount = async (req, res) => {
     const { image } = req.files;
 
     const user = await User.findOne({ _id: req.user._id })
-      .select(['-password', '-reset_password_pin'])
+      .select(["-password", "-reset_password_pin"])
       .exec();
 
-    if (!user) return responseHandler(res, 'No user found!', 400);
+    if (!user) return responseHandler(res, "No user found!", 400);
 
     // Make sure nobody can change password/pin illegally so store them temporarily
     const userPassword = user.password;
@@ -60,7 +60,7 @@ exports.updateAccount = async (req, res) => {
           user.photo = downloadURL;
         },
         (error) => {
-          console.error('CLOUDINARY ERROR ==>', error);
+          console.error("CLOUDINARY ERROR ==>", error);
         }
       );
     }
@@ -69,8 +69,8 @@ exports.updateAccount = async (req, res) => {
     for (const field in data) {
       user[field] = data[field];
 
-      if (data['address1']) user.address['primary'] = data['address1'];
-      if (data['address2']) user.address['secondary'] = data['address2'];
+      if (data["address1"]) user.address["primary"] = data["address1"];
+      if (data["address2"]) user.address["secondary"] = data["address2"];
     }
 
     // Now if someone entered a new password/pin illegally, revert to old password/pin
@@ -82,10 +82,10 @@ exports.updateAccount = async (req, res) => {
       if (err) return responseHandler(res, translateError(err), 500);
     });
 
-    responseHandler(res, 'User data updated successfully.', 200, false, user);
+    responseHandler(res, "User data updated successfully.", 200, false, user);
   } catch (error) {
     console.log(error);
-    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+    return responseHandler(res, "Something went wrong! Please try again.", 500);
   }
 };
 
@@ -95,11 +95,11 @@ exports.changePassword = async (req, res) => {
 
     const user = await User.findOne({ _id: req.user._id }).exec();
 
-    if (!user) return responseHandler(res, 'No user found!', 400);
+    if (!user) return responseHandler(res, "No user found!", 400);
 
     const verifyPassword = await comparePassword(oldPassword, user.password);
     if (!verifyPassword) {
-      return responseHandler(res, 'Current password is wrong!', 400);
+      return responseHandler(res, "Current password is wrong!", 400);
     }
 
     const hashedPassword = await hashPassword(password);
@@ -109,10 +109,10 @@ exports.changePassword = async (req, res) => {
       { $set: { password: hashedPassword } }
     ).exec();
 
-    responseHandler(res, 'Password updated!', 200, false);
+    responseHandler(res, "Password updated!", 200, false);
   } catch (error) {
     console.log(error);
-    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+    return responseHandler(res, "Something went wrong! Please try again.", 500);
   }
 };
 
@@ -123,12 +123,12 @@ exports.profiles = async (req, res) => {
       { password: 0, reset_password_pin: 0 }
     ).exec();
 
-    if (!users) return responseHandler(res, 'No user data!', 400);
+    if (!users) return responseHandler(res, "No user data!", 400);
 
-    responseHandler(res, '', 200, false, users);
+    responseHandler(res, "", 200, false, users);
   } catch (error) {
     console.log(error);
-    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+    return responseHandler(res, "Something went wrong! Please try again.", 500);
   }
 };
 
@@ -136,15 +136,15 @@ exports.deleteAll = (req, res) => {
   try {
     const user = User.findOne({ email: req.body.email }).exec((err, user) => {
       if (err || !user) {
-        return responseHandler(res, 'User does not exist!', 400);
+        return responseHandler(res, "User does not exist!", 400);
       }
 
       User.deleteOne({ email: req.body.email }).exec();
     });
 
-    responseHandler(res, 'Accounts deleted successfully.', 200, false);
+    responseHandler(res, "Accounts deleted successfully.", 200, false);
   } catch (error) {
     console.log(error);
-    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+    return responseHandler(res, "Something went wrong! Please try again.", 500);
   }
 };

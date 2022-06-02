@@ -7,6 +7,7 @@ const requireSignin = async (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
     if (err) return responseHandler(res, err, 403);
+    console.log(user);
 
     const userExists = await User.findById(user._id).exec();
 

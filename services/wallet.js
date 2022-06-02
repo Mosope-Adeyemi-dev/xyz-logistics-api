@@ -1,6 +1,7 @@
 const https = require("https");
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
+const User = require("../models/user.model");
 const Wallet = require("../models/wallet");
 const { translateError } = require("../utils/mongo_helper");
 const { getUrl } = require("./userServices");
@@ -85,28 +86,31 @@ const verifyTransactionStatus = async (reference) => {
   });
 };
 
-const updateWalletBalance = async (email, amountInKobo) =>
-  await Wallet.findOneAndUpdate(
+const storeTransaction = async (email, transactionDetail) => {
+  const { status, id, amount, reference } = transactionDetail;
+  await User.findOneAndUpdate(
     { email },
-    { $inc: { walletBalance: amountInKobo * 100 } },
+    {
+      $push: {
+        transactionHistory: {
+          transactionId: id,
+          status,
+          amount,
+          reference,
+          fullHistory: transactionDetail,
+        },
+      },
+    },
     { new: true }
   );
-
-const createWallet = async (userId) => {
-  try {
-    const newWallet = new Wallet({
-      userId,
-    });
-    if (await newWallet.save()) {
-      return [true, newWallet];
-    }
-  } catch (error) {
-    return [false, translateError(error)];
-  }
 };
+
+const checkTransactionExists = async (reference) =>
+  await User.findOne({ transactionHistory: { $elemMatch: { reference } } });
+
 module.exports = {
   intializePaymentChannel,
   verifyTransactionStatus,
-  createWallet,
-  updateWalletBalance,
+  storeTransaction,
+  checkTransactionExists,
 };

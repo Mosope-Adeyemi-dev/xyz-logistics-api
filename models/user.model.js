@@ -1,5 +1,12 @@
-const mongoose = require('mongoose');
-
+const mongoose = require("mongoose");
+const transactionHistorySchema = new mongoose.Schema({
+  transactionId: { type: Number, unique: true },
+  status: { type: String, default: "pending" },
+  amount: Number,
+  reference: { type: String, unique: true },
+  authorizationCode: String,
+  fullHistory: Object,
+});
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -24,17 +31,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
-    wallet_balance: {
-      type: Number,
-      default: 0,
-    },
+    transactionHistory: [transactionHistorySchema],
     photo: {
       type: String,
-      default: '/avatar.png',
+      default: "/avatar.png",
     },
     phone_number: {
       type: String,
-      maxlength: [15, 'Phone number should not be more than 15 characters'],
+      maxlength: [15, "Phone number should not be more than 15 characters"],
     },
     address: {
       primary: {
@@ -46,12 +50,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: [String],
-      default: ['User'],
-      enum: ['User', 'Rider', 'Admin'],
+      default: ["User"],
+      enum: ["User", "Rider"],
     },
     reset_password_pin: {
       type: String,
-      default: '',
+      default: "",
     },
     reset_pin_expiry: {
       type: Date,
@@ -64,4 +68,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
