@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 const intializePaymentValidation = async (field) => {
   const schema = Joi.object({

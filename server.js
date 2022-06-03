@@ -1,5 +1,5 @@
-const app = require("./app");
-const { connectDB } = require("./config/db");
+const app = require('./app');
+const { connectDB } = require('./config/db');
 
 const port = process.env.PORT || 4000;
 
@@ -11,5 +11,5 @@ connectDB()
     });
   })
   .catch(() => {
-    console.log("Database connection failed!");
+    console.log('Database connection failed!');
   });
