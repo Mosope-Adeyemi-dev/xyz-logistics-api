@@ -4,6 +4,8 @@ const {
 const {
   intializePaymentChannel,
   verifyTransactionStatus,
+  storeTransaction,
+  checkTransactionExists,
 } = require("../services/wallet");
 const { responseHandler } = require("../utils/responseHandler");
 
@@ -44,23 +46,38 @@ const verifyPayment = async (req, res) => {
     );
   }
   const { reference } = req.query;
-  const checkTransactionStatus = await verifyTransactionStatus(reference);
-  console.log(checkTransactionStatus, "controller here");
-  if (checkTransactionStatus[0]) {
+  const checkTransactionDetails = await verifyTransactionStatus(reference);
+
+  if (checkTransactionDetails[0]) {
+    const isTransactionSaved = await checkTransactionExists(
+      checkTransactionDetails[1].data.reference
+    );
+    if (
+      checkTransactionDetails[1].data.status == "success" &&
+      !isTransactionSaved
+    ) {
+      await storeTransaction(
+        checkTransactionDetails[1].data.customer.email,
+        checkTransactionDetails[1].data
+      );
+    }
     return responseHandler(
       res,
-      "Transaction status rertrieved succesful",
+      checkTransactionDetails[1].message,
       200,
       false,
-      checkTransactionStatus[1]
+      {
+        transactionStatus: checkTransactionDetails[1].data.status,
+        reference: checkTransactionDetails[1].data.reference,
+      }
     );
   }
   return responseHandler(
     res,
-    "Transaction status retrieval unsuccesful",
+    checkTransactionDetails[1].message,
     400,
     true,
-    checkTransactionStatus[1]
+    checkTransactionDetails[1].data
   );
 };
 
