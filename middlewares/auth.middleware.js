@@ -35,7 +35,7 @@ const isVerified = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
   const user = await Admin.findOne({ _id: req.user._id }).exec();
 
-  if (user.role !== 'admin') {
+  if (!user || user.role !== 'admin') {
     return responseHandler(
       res,
       'Unauthorized! Only admins are authorized.',
