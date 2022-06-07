@@ -31,16 +31,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// routes
-readdirSync('./routes').map((routeName) => {
-  app.use('/api/v1', require(`./routes/${routeName}`));
-});
-
 // csrf
 app.use(csrfProtection);
 
 app.get('/api/csrf-token', (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
+  const csrfToken = req.csrfToken();
+  res.json({ csrfToken });
+});
+
+// routes
+readdirSync('./routes').map((routeName) => {
+  app.use('/api/v1', require(`./routes/${routeName}`));
 });
 
 app.get('/', (req, res) => {

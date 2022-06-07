@@ -25,7 +25,7 @@ const translateError = (err) => {
   } else {
     Object.keys(err.errors).map((field) => {
       let msg = err.errors[field].message;
-      errors.push(toSentenceCase(msg.replace("Path ", "").replace(/`/g, "")));
+      errors.push(toSentenceCase(msg.replace('Path ', '').replace(/`/g, '')));
     });
   }
   return errors;

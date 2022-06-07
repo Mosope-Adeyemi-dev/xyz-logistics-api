@@ -1,22 +1,21 @@
 const {
   intializePaymentValidation,
-} = require("../validations/walletValidations");
+} = require('../validations/walletValidations');
 const {
   intializePaymentChannel,
   verifyTransactionStatus,
   storeTransaction,
   checkTransactionExists,
-} = require("../services/wallet");
-const { responseHandler } = require("../utils/responseHandler");
+} = require('../services/wallet');
+const { responseHandler } = require('../utils/responseHandler');
 
 const intializePayment = async (req, res) => {
   const { details } = await intializePaymentValidation(req.body);
   if (details) {
-    let allErrors = details.map((detail) => detail.message.replace(/"/g, ""));
-    return responseHandler(res, allErrors, 400, true, "");
+    let allErrors = details.map((detail) => detail.message.replace(/"/g, ''));
+    return responseHandler(res, allErrors, 400, true, '');
   }
   const checkInitialization = await intializePaymentChannel(req.body);
-  console.log(checkInitialization, "controller here");
   if (checkInitialization[0]) {
     return responseHandler(
       res,
@@ -39,10 +38,10 @@ const verifyPayment = async (req, res) => {
   if (req.query.reference === undefined) {
     return responseHandler(
       res,
-      "Include valid transaction reference",
+      'Include valid transaction reference',
       400,
       true,
-      ""
+      ''
     );
   }
   const { reference } = req.query;
@@ -53,7 +52,7 @@ const verifyPayment = async (req, res) => {
       checkTransactionDetails[1].data.reference
     );
     if (
-      checkTransactionDetails[1].data.status == "success" &&
+      checkTransactionDetails[1].data.status == 'success' &&
       !isTransactionSaved
     ) {
       await storeTransaction(
