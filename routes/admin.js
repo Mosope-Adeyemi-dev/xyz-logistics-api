@@ -4,10 +4,7 @@ const {
   login,
   signup,
 } = require('../controllers/admin.controller');
-const {
-  verifyToken,
-  isSuperAdmin,
-} = require('../middlewares/admin.middleware');
+const { isSuperAdmin } = require('../middlewares/admin.middleware');
 
 router.post('/admin/invite', isSuperAdmin, inviteAdmin);
 router.post('/auth/admin/signup', signup);

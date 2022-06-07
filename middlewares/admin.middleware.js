@@ -8,11 +8,9 @@ const verifyToken = async (req, res, next) => {
     const token = bearerHeader.split(' ')[1];
     try {
       const decode = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(decode);
       const { exp, id } = decode;
 
       const foundAdmin = await Admin.findById(id);
-      console.log(foundAdmin);
       if (!foundAdmin) {
         return res.status(403).json({
           error: true,
@@ -51,11 +49,9 @@ const isSuperAdmin = async (req, res, next) => {
     const token = bearerHeader.split(' ')[1];
     try {
       const decode = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(decode);
       const { exp, id } = decode;
 
       const foundAdmin = await Admin.findById(id);
-      console.log(foundAdmin);
       if (!foundAdmin) {
         return res.status(403).json({
           error: true,

@@ -16,7 +16,6 @@ const intializePayment = async (req, res) => {
     return responseHandler(res, allErrors, 400, true, '');
   }
   const checkInitialization = await intializePaymentChannel(req.body);
-  console.log(checkInitialization, 'controller here');
   if (checkInitialization[0]) {
     return responseHandler(
       res,

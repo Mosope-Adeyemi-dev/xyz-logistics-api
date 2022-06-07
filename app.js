@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 });
 
 // csrf
-// app.use(csrfProtection);
+app.use(csrfProtection);
 
 app.get('/api/csrf-token', (req, res) => {
   const csrfToken = req.csrfToken();

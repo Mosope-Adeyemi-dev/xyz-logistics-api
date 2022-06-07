@@ -1,7 +1,6 @@
 const {
   createAdminAccount,
   authenticateAdmin,
-  createSuperAdminDemo,
   setupAdminAccount,
 } = require('../services/adminServices');
 const {
@@ -34,10 +33,9 @@ const inviteAdmin = async (req, res) => {
 		`,
     };
     try {
-      const info = await transporter.sendMail(msg);
+      await transporter.sendMail(msg);
       return responseHandler(res, 'Admin invitation sent', 201, false, '');
     } catch (error) {
-      console.error(error);
       return responseHandler(
         res,
         'Unable to send invitation, try again!',
