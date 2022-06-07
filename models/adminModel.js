@@ -16,7 +16,7 @@ const adminSchema = new Schema({
     required: true,
     trim: true,
   },
-  inviteToken: { type: Number, required: true },
+  inviteToken: { type: String, required: true },
   role: { type: String, default: 'admin' },
 });
 

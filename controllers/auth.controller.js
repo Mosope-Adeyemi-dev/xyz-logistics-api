@@ -81,7 +81,6 @@ exports.signup = async (req, res) => {
       });
     });
   } catch (error) {
-    console.log(error);
     return responseHandler(res, 'Something went wrong! Please try again.', 500);
   }
 };
@@ -115,7 +114,6 @@ exports.emailVerified = (req, res) => {
       return responseHandler(res, 'Invalid token. Try again', 400);
     }
   } catch (error) {
-    console.log(error);
     return responseHandler(res, 'Something went wrong! Please try again.', 500);
   }
 };

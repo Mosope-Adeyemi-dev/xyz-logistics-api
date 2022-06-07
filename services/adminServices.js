@@ -18,6 +18,34 @@ const createAdminAccount = async (email) => {
   }
 };
 
+const setupAdminAccount = async ({
+  firstname,
+  lastname,
+  email,
+  token,
+  password,
+}) => {
+  try {
+    const foundAdmin = await Admin.findOne({ email });
+    if (foundAdmin && token === foundAdmin.inviteToken) {
+      const updateAdmin = await Admin.findOneAndUpdate(
+        { email },
+        {
+          firstname,
+          lastname,
+          password: await hashedPassword(password),
+          inviteToken: '#',
+        },
+        { new: true }
+      );
+      return [true, signJwt(updateAdmin._id), updateAdmin];
+    }
+    return [false, 'Invalid account email or invite token'];
+  } catch (error) {
+    return [false, translateError(error)];
+  }
+};
+
 const createSuperAdminDemo = async ({
   firstname,
   lastname,
@@ -79,5 +107,6 @@ module.exports = {
   createAdminAccount,
   createSuperAdminDemo,
   authenticateAdmin,
+  setupAdminAccount,
   signJwt,
 };

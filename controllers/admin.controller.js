@@ -2,6 +2,7 @@ const {
   createAdminAccount,
   authenticateAdmin,
   createSuperAdminDemo,
+  setupAdminAccount,
 } = require('../services/adminServices');
 const {
   inviteAdminValidation,
@@ -9,7 +10,7 @@ const {
   adminSignupValidation,
 } = require('../validations/adminValidation');
 const { responseHandler } = require('../utils/responseHandler');
-const { transporter } = require('../config/email');
+const transporter = require('../config/email');
 
 const inviteAdmin = async (req, res) => {
   const details = await inviteAdminValidation();
@@ -27,22 +28,16 @@ const inviteAdmin = async (req, res) => {
 			<h2>XYZ Logistics</h2>
 			<p>Please use the provided token to log into your admin acccount.</p>
 
-      <h4>${newAdmin.inviteToken}</h4>
+      <h4>${newAdmin[1].inviteToken}</h4>
       <hr/>
       <footer>This email may contain sensitive information</footer>
 		`,
     };
     try {
       const info = await transporter.sendMail(msg);
-      console.log(info);
-      return responseHandler(
-        res,
-        'Admin invitation sent',
-        201,
-        false,
-        newAdmin[1]
-      );
+      return responseHandler(res, 'Admin invitation sent', 201, false, '');
     } catch (error) {
+      console.error(error);
       return responseHandler(
         res,
         'Unable to send invitation, try again!',
@@ -88,10 +83,10 @@ const signup = async (req, res) => {
     return responseHandler(res, allErrors, 400, true, '');
   }
 
-  const check = await createSuperAdminDemo(req.body);
+  // const check = await createSuperAdminDemo(req.body);
+  const check = await setupAdminAccount(req.body);
   if (check[0]) {
-    console.log(check[2]);
-    // res.cookie('token', check[1], { expiresIn: '1d', httpOnly: true });
+    res.cookie('token', check[1], { expiresIn: '1d', httpOnly: true });
     return responseHandler(res, 'Account succesffully created', 201, false, {
       token: check[1],
     });

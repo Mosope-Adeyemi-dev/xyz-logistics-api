@@ -28,7 +28,7 @@ const adminSignupValidation = async (field) => {
     password: Joi.string().required().min(8).max(1024),
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
-    role: Joi.string().required().allow(['admin', 'superAdmin']),
+    token: Joi.string().required(),
   });
   try {
     return await schema.validateAsync(field, { abortEarly: false });

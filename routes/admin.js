@@ -4,8 +4,12 @@ const {
   login,
   signup,
 } = require('../controllers/admin.controller');
-const { verifyToken } = require('../middlewares/admin.middleware');
+const {
+  verifyToken,
+  isSuperAdmin,
+} = require('../middlewares/admin.middleware');
 
-router.post('/admin/invite', verifyToken, inviteAdmin);
-router.post('/auth/admin/login', signup);
+router.post('/admin/invite', isSuperAdmin, inviteAdmin);
+router.post('/auth/admin/signup', signup);
+router.post('/auth/admin/login', login);
 module.exports = router;
