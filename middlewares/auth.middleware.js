@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const Admin = require('../models/adminModel');
 const jwt = require('jsonwebtoken');
 const { responseHandler } = require('../utils/responseHandler');
 
@@ -7,7 +8,6 @@ const requireSignin = async (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
     if (err) return responseHandler(res, err, 403);
-    console.log(user);
 
     const userExists = await User.findById(user._id).exec();
 
@@ -32,4 +32,18 @@ const isVerified = async (req, res, next) => {
   next();
 };
 
-module.exports = { requireSignin, isVerified };
+const isAdmin = async (req, res, next) => {
+  const user = await Admin.findOne({ _id: req.user._id }).exec();
+
+  if (user.role !== 'admin') {
+    return responseHandler(
+      res,
+      'Unauthorized! Only admins are authorized.',
+      401
+    );
+  }
+
+  next();
+};
+
+module.exports = { requireSignin, isVerified, isAdmin };
