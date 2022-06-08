@@ -51,7 +51,14 @@ exports.createRequest = async (req, res) => {
 
 exports.getRequests = async (req, res) => {
   try {
-    const requests = await Package.find()
+    let query;
+    if (req.query?.status?.length > 0) {
+      query = { status: req.query.status };
+    } else {
+      query = {};
+    }
+
+    const requests = await Package.find(query)
       .populate('creatorId', '_id firstname lastname phone_number')
       .populate('delivery_agent', '_id firstname lastname phone_number')
       .exec();
@@ -73,7 +80,14 @@ exports.getRequests = async (req, res) => {
 
 exports.getUserRequests = async (req, res) => {
   try {
-    const requests = await Package.find({ creatorId: req.params.userId })
+    let query;
+    if (req.query?.status?.length > 0) {
+      query = { creatorId: req.user._id, status: req.query.status };
+    } else {
+      query = { creatorId: req.user._id };
+    }
+
+    const requests = await Package.find(query)
       .populate('creatorId', '_id firstname lastname phone_number')
       .populate('delivery_agent', '_id firstname lastname phone_number')
       .exec();

@@ -28,8 +28,12 @@ const packageSchema = new mongoose.Schema(
     },
     weight: {
       type: Number,
-      max: 300,
-      required: [true, 'Please input the weight in kg.'],
+      max: 500,
+    },
+    package_type: {
+      type: String,
+
+      required: [true, 'Please input the type.'],
     },
     pickup_address: {
       type: String,
@@ -53,11 +57,11 @@ const packageSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['assigned', 'shipped', 'delivered'],
+      enum: ['pending', 'active', 'delivered', 'cancelled'],
+      default: 'pending',
     },
-    is_cancelled: {
-      type: Boolean,
-      default: false,
+    vehicle: {
+      type: String,
     },
   },
   { timestamps: true }

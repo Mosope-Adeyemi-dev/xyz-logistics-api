@@ -33,7 +33,7 @@ const isVerified = async (req, res, next) => {
 };
 
 const isAdmin = async (req, res, next) => {
-  const user = await Admin.findOne({ _id: req.user._id }).exec();
+  const user = await Admin.findById(req.adminId).exec();
 
   if (!user || user.role !== 'admin') {
     return responseHandler(
