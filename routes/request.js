@@ -8,6 +8,8 @@ const {
   getUserRequests,
 } = require('../controllers/request.controller');
 
+const { verifyToken } = require('../middlewares/admin.middleware');
+
 const {
   requireSignin,
   isVerified,
@@ -15,8 +17,8 @@ const {
 } = require('../middlewares/auth.middleware');
 
 router.post('/request', requireSignin, isVerified, createRequest);
-router.get('/requests', requireSignin, isVerified, isAdmin, getRequests);
-router.get('/requests/:userId', requireSignin, isVerified, getUserRequests);
+router.get('/requests', verifyToken, isAdmin, getRequests);
+router.get('/requests/user', requireSignin, isVerified, getUserRequests);
 // router.get('/requests', );
 // router.put('/request/:id', );
 
