@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 // csrf
 app.use(csrfProtection);
 
-app.get('/api/csrf-token', (req, res) => {
+app.get('/api/v1/csrf-token', (req, res) => {
   const csrfToken = req.csrfToken();
   res.json({ csrfToken });
 });
