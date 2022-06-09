@@ -107,3 +107,40 @@ exports.getUserRequests = async (req, res) => {
     return responseHandler(res, 'Something went wrong! Please try again.', 500);
   }
 };
+
+exports.requestDetails = async (req, res) => {
+  try {
+    const request = await Package.findById(req.params.id)
+      .populate('creatorId', '_id firstname lastname phone_number')
+      .populate('delivery_agent', '_id firstname lastname phone_number')
+      .exec();
+
+    if (!request) return responseHandler(res, 'Request not found', 404);
+
+    responseHandler(
+      res,
+      'Request retrieved successfully.',
+      200,
+      false,
+      request
+    );
+  } catch (error) {
+    console.log(error);
+    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+  }
+};
+
+exports.cancelRequest = async (req, res) => {
+  try {
+    Package.findByIdAndUpdate(req.params.id, {
+      $set: { status: 'cancelled' },
+    }).exec((err, result) => {
+      if (err) return responseHandler(res, translateError(err), 500);
+
+      responseHandler(res, 'Request cancelled.', 200, false);
+    });
+  } catch (error) {
+    console.log(error);
+    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+  }
+};

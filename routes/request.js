@@ -6,6 +6,8 @@ const {
   createRequest,
   getRequests,
   getUserRequests,
+  requestDetails,
+  cancelRequest,
 } = require('../controllers/request.controller');
 
 const { verifyToken } = require('../middlewares/admin.middleware');
@@ -19,7 +21,7 @@ const {
 router.post('/request', requireSignin, isVerified, createRequest);
 router.get('/requests', verifyToken, isAdmin, getRequests);
 router.get('/requests/user', requireSignin, isVerified, getUserRequests);
-// router.get('/requests', );
-// router.put('/request/:id', );
+router.get('/request/:id', requestDetails);
+router.patch('/request/:id/cancel', requireSignin, isVerified, cancelRequest);
 
 module.exports = router;
