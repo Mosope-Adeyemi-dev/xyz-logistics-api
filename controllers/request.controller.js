@@ -51,7 +51,14 @@ exports.createRequest = async (req, res) => {
 
 exports.getRequests = async (req, res) => {
   try {
-    const requests = await Package.find()
+    let query;
+    if (req.query?.status?.length > 0) {
+      query = { status: req.query.status };
+    } else {
+      query = {};
+    }
+
+    const requests = await Package.find(query)
       .populate('creatorId', '_id firstname lastname phone_number')
       .populate('delivery_agent', '_id firstname lastname phone_number')
       .exec();
@@ -73,7 +80,14 @@ exports.getRequests = async (req, res) => {
 
 exports.getUserRequests = async (req, res) => {
   try {
-    const requests = await Package.find({ creatorId: req.params.userId })
+    let query;
+    if (req.query?.status?.length > 0) {
+      query = { creatorId: req.user._id, status: req.query.status };
+    } else {
+      query = { creatorId: req.user._id };
+    }
+
+    const requests = await Package.find(query)
       .populate('creatorId', '_id firstname lastname phone_number')
       .populate('delivery_agent', '_id firstname lastname phone_number')
       .exec();
@@ -88,6 +102,43 @@ exports.getUserRequests = async (req, res) => {
       false,
       requests
     );
+  } catch (error) {
+    console.log(error);
+    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+  }
+};
+
+exports.requestDetails = async (req, res) => {
+  try {
+    const request = await Package.findById(req.params.id)
+      .populate('creatorId', '_id firstname lastname phone_number')
+      .populate('delivery_agent', '_id firstname lastname phone_number')
+      .exec();
+
+    if (!request) return responseHandler(res, 'Request not found', 404);
+
+    responseHandler(
+      res,
+      'Request retrieved successfully.',
+      200,
+      false,
+      request
+    );
+  } catch (error) {
+    console.log(error);
+    return responseHandler(res, 'Something went wrong! Please try again.', 500);
+  }
+};
+
+exports.cancelRequest = async (req, res) => {
+  try {
+    Package.findByIdAndUpdate(req.params.id, {
+      $set: { status: 'cancelled' },
+    }).exec((err, result) => {
+      if (err) return responseHandler(res, translateError(err), 500);
+
+      responseHandler(res, 'Request cancelled.', 200, false);
+    });
   } catch (error) {
     console.log(error);
     return responseHandler(res, 'Something went wrong! Please try again.', 500);

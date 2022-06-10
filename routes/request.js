@@ -6,7 +6,11 @@ const {
   createRequest,
   getRequests,
   getUserRequests,
+  requestDetails,
+  cancelRequest,
 } = require('../controllers/request.controller');
+
+const { verifyToken } = require('../middlewares/admin.middleware');
 
 const {
   requireSignin,
@@ -15,9 +19,9 @@ const {
 } = require('../middlewares/auth.middleware');
 
 router.post('/request', requireSignin, isVerified, createRequest);
-router.get('/requests', requireSignin, isVerified, isAdmin, getRequests);
-router.get('/requests/:userId', requireSignin, isVerified, getUserRequests);
-// router.get('/requests', );
-// router.put('/request/:id', );
+router.get('/requests', verifyToken, isAdmin, getRequests);
+router.get('/requests/user', requireSignin, isVerified, getUserRequests);
+router.get('/request/:id', requestDetails);
+router.patch('/request/:id/cancel', requireSignin, isVerified, cancelRequest);
 
 module.exports = router;

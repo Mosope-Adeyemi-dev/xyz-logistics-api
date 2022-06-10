@@ -19,8 +19,8 @@ const verifyToken = async (req, res, next) => {
       }
 
       if (exp < Date.now()) {
-        next();
         req.adminId = id;
+        next();
       } else {
         return res.status(403).json({
           error: true,
