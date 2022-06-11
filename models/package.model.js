@@ -32,7 +32,6 @@ const packageSchema = new mongoose.Schema(
     },
     package_type: {
       type: String,
-
       required: [true, 'Please input the type.'],
     },
     pickup_address: {
@@ -57,7 +56,7 @@ const packageSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'active', 'delivered', 'cancelled'],
+      enum: ['pending', 'active', 'delivered', 'cancelled', 'denied'],
       default: 'pending',
     },
     vehicle: {

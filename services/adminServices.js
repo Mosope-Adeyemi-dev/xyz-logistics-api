@@ -1,5 +1,6 @@
 const { gen } = require('n-digit-token');
 const Admin = require('../models/adminModel');
+const Package = require('../models/package.model');
 const { translateError } = require('../utils/mongo_helper');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -103,10 +104,45 @@ const signJwt = (id) => {
 const validatePassword = async (formPassword, dbPassword) =>
   await bcrypt.compare(formPassword, dbPassword);
 
+const assignRiderToPackage = async (packageId, riderId) => {
+  try {
+    const updatedPackage = await Package.findByIdAndUpdate(
+      packageId,
+      {
+        delivery_agent: riderId,
+        status: 'active',
+      },
+      { new: true }
+    );
+    if (updatedPackage) return [true, updatedPackage];
+    return [false, 'package not found'];
+  } catch (error) {
+    return [false, translateError(error)];
+  }
+};
+
+const declineRequest = async (packageId) => {
+  // $set: { status: 'cancelled' }
+  try {
+    const updatedPackage = await Package.findByIdAndUpdate(
+      packageId,
+      {
+        $set: { status: 'cancelled' },
+      },
+      { new: true }
+    );
+    if (updatedPackage) return [true, updatedPackage];
+    return [false, 'package not found'];
+  } catch (error) {
+    return [false, translateError(error)];
+  }
+}
 module.exports = {
   createAdminAccount,
   createSuperAdminDemo,
   authenticateAdmin,
   setupAdminAccount,
+  assignRiderToPackage,
+  declineRequest,
   signJwt,
 };
