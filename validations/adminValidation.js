@@ -37,8 +37,20 @@ const adminSignupValidation = async (field) => {
   }
 };
 
+const assignRiderValidation = async (field) => {
+  const schema = Joi.object({
+    riderId: Joi.string().required(),
+  });
+  try {
+    return await schema.validateAsync(field, { abortEarly: false });
+  } catch (err) {
+    return err;
+  }
+};
+
 module.exports = {
   inviteAdminValidation,
   adminLoginValidation,
   adminSignupValidation,
+  assignRiderValidation,
 };

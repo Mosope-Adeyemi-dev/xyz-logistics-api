@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const transactionHistorySchema = new mongoose.Schema({
-  transactionId: { type: Number, unique: true },
+  transactionId: { type: Number },
   status: { type: String, default: 'pending' },
   amount: Number,
-  reference: { type: String, unique: true },
+  reference: { type: String },
   authorizationCode: String,
   fullHistory: Object,
 });
