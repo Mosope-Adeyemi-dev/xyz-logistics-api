@@ -18,11 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //cors
 app.use((req, res, next) => {
-  const allowedOrigins = ['*'];
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Methods',
     'GET, POST, PUT, DELETE, PATCH'
