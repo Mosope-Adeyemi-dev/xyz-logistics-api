@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     'Access-Control-Allow-Methods',
     'GET, POST, PUT, DELETE, PATCH'
   );
-  res.setHeader('Access-Control-Allow-Headers', 'content-type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'content-type, Authorization. x-csrf-token');
   next();
 });
 
