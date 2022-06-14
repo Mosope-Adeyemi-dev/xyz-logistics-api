@@ -13,7 +13,7 @@ exports.userProfile = async (req, res) => {
 
     if (!user) return responseHandler(res, 'No user data!', 400);
 
-    responseHandler(res, '', 200, false, user);
+    responseHandler(res, 'Profile retrieved successfully.', 200, false, user);
   } catch (error) {
     console.log(error);
     return responseHandler(res, 'Something went wrong! Please try again.', 500);
