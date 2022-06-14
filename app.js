@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const { readdirSync } = require('fs');
-const csrf = require('csurf');
+// const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 
-const csrfProtection = csrf({ cookie: true });
+// const csrfProtection = csrf({ cookie: true });
 
 const app = express();
 
@@ -32,12 +32,12 @@ app.use((req, res, next) => {
 });
 
 // csrf
-app.use(csrfProtection);
+// app.use(csrfProtection);
 
-app.get('/api/v1/csrf-token', (req, res) => {
-  const csrfToken = req.csrfToken();
-  res.json({ csrfToken });
-});
+// app.get('/api/v1/csrf-token', (req, res) => {
+//   const csrfToken = req.csrfToken();
+//   res.json({ csrfToken });
+// });
 
 // routes
 readdirSync('./routes').map((routeName) => {
