@@ -76,7 +76,8 @@ exports.signup = async (req, res) => {
           res,
           `Signup successful! Please verify your email, ${info.accepted[0]}`,
           200,
-          false
+          false,
+          token
         );
       });
     });
@@ -146,7 +147,7 @@ exports.signin = async (req, res) => {
 
     res.cookie('token', token, { expiresIn: '1d', httpOnly: true });
 
-    return responseHandler(res, 'Login success!', 200, false, user);
+    return responseHandler(res, 'Login success!', 200, false, { token, user });
   } catch (error) {
     console.log(error);
     return responseHandler(res, 'Something went wrong! Please try again.', 500);
