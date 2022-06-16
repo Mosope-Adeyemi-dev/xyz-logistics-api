@@ -17,7 +17,7 @@ const { requireSignin } = require('../middlewares/auth.middleware');
 
 router.get('/user/profile/:id', requireSignin, userProfile);
 router.delete('/user/delete', requireSignin, deleteAccount);
-router.patch('/user/me', requireSignin, formidable(), updateAccount);
+router.put('/user/me', requireSignin, formidable(), updateAccount);
 router.put('/user/change-password', requireSignin, changePassword);
 
 // development only
