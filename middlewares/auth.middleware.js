@@ -4,20 +4,24 @@ const jwt = require('jsonwebtoken');
 const { responseHandler } = require('../utils/responseHandler');
 
 const requireSignin = async (req, res, next) => {
-  const token = req.cookies.token;
+  if (req.headers.authorization) {
+    const token = req.headers.authorization.split(' ')[1];
 
-  jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
-    if (err) return responseHandler(res, err, 403);
+    jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
+      if (err) return responseHandler(res, err, 403);
 
-    const userExists = await User.findById(user._id).exec();
+      const userExists = await User.findById(user._id).exec();
 
-    if (userExists) {
-      req.user = user;
-      next();
-    } else {
-      return responseHandler(res, 'User does not exist! Please signup.', 403);
-    }
-  });
+      if (userExists) {
+        req.user = user;
+        next();
+      } else {
+        return responseHandler(res, 'User does not exist! Please signup.', 403);
+      }
+    });
+  } else {
+    responseHandler(res, 'Unauthorized! Invalid token.', 401);
+  }
 };
 
 const isVerified = async (req, res, next) => {

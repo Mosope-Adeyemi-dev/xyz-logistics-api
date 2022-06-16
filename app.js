@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const { readdirSync } = require('fs');
-const csrf = require('csurf');
+// const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 
-const csrfProtection = csrf({ cookie: true });
+// const csrfProtection = csrf({ cookie: true });
 
 const app = express();
 
@@ -18,26 +18,33 @@ app.use(express.urlencoded({ extended: false }));
 
 //cors
 app.use((req, res, next) => {
-  const allowedOrigins = ['*'];
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+  const corsWhitelist = [
+    'http://localhost:3000',
+    'https://interns-logistics-app.netlify.app',
+  ];
+
+  if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+    );
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, Content-Type, Authorization, X-CSRF-TOKEN'
+    );
   }
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, DELETE, PATCH'
-  );
-  res.setHeader('Access-Control-Allow-Headers', 'content-type, Authorization');
   next();
 });
 
 // csrf
-app.use(csrfProtection);
+// app.use(csrfProtection);
 
-app.get('/api/v1/csrf-token', (req, res) => {
-  const csrfToken = req.csrfToken();
-  res.json({ csrfToken });
-});
+// app.get('/api/v1/csrf-token', (req, res) => {
+//   const csrfToken = req.csrfToken();
+//   res.json({ csrfToken });
+// });
 
 // routes
 readdirSync('./routes').map((routeName) => {

@@ -2,11 +2,13 @@ const {
   createAdminAccount,
   authenticateAdmin,
   setupAdminAccount,
+  assignRiderToPackage,
 } = require('../services/adminServices');
 const {
   inviteAdminValidation,
   adminLoginValidation,
   adminSignupValidation,
+  assignRiderValidation,
 } = require('../validations/adminValidation');
 const { responseHandler } = require('../utils/responseHandler');
 const transporter = require('../config/email');
@@ -92,8 +94,60 @@ const signup = async (req, res) => {
   return responseHandler(res, check[1], 400, true, '');
 };
 
+const assignRider = async (req, res) => {
+  const { details } = await assignRiderValidation(req.body);
+  if (details) {
+    let allErrors = details.map((detail) => detail.message.replace(/"/g, ''));
+    return responseHandler(res, allErrors, 400, true, '');
+  }
+  if (req.params.packageId === undefined) {
+    return responseHandler(res, 'Include valid package ID', 400, true, '');
+  }
+  const check = await assignRiderToPackage(
+    req.params.packageId,
+    req.body.riderId
+  );
+  if (check[0]) {
+    return responseHandler(
+      res,
+      'ackage succesffully assigned',
+      201,
+      false,
+      check[1]
+    );
+  }
+  return responseHandler(res, check[1], 400, true, '');
+};
+
+const declineRequest = async (req, res) => {
+  const { details } = await assignRiderValidation(req.body);
+  if (details) {
+    let allErrors = details.map((detail) => detail.message.replace(/"/g, ''));
+    return responseHandler(res, allErrors, 400, true, '');
+  }
+  if (req.params.packageId === undefined) {
+    return responseHandler(res, 'Include valid package ID', 400, true, '');
+  }
+  const check = await assignRiderToPackage(
+    req.params.packageId,
+    req.body.riderId
+  );
+  if (check[0]) {
+    return responseHandler(
+      res,
+      'ackage succesffully assigned',
+      201,
+      false,
+      check[1]
+    );
+  }
+  return responseHandler(res, check[1], 400, true, '');
+};
+
 module.exports = {
   inviteAdmin,
   login,
   signup,
+  assignRider,
+  declineRequest,
 };
