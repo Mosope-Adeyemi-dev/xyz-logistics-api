@@ -45,6 +45,11 @@ const packageSchema = new mongoose.Schema(
       type: ObjectId,
       ref: 'User',
     },
+    regionType: {
+      type: String,
+      enum: ['local', 'international'],
+      required: true,
+    },
     requestApproved: {
       type: Boolean,
       default: false,
