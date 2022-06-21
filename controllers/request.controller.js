@@ -13,6 +13,7 @@ exports.createRequest = async (req, res) => {
       pickup_address,
       delivery_address,
       deliveryType,
+      regionType,
     } = req.body;
 
     const creatorId = req.user._id;
@@ -31,7 +32,8 @@ exports.createRequest = async (req, res) => {
       pickup_address,
       delivery_address,
       deliveryType,
-      package_type
+      regionType,
+      package_type,
     });
 
     await package.save((err, package) => {
