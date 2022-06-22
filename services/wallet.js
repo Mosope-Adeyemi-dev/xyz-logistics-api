@@ -107,9 +107,13 @@ const storeTransaction = async (email, transactionDetail) => {
 const checkTransactionExists = async (reference) =>
   await User.findOne({ transactionHistory: { $elemMatch: { reference } } });
 
+const getUserTransactions = async (userId) =>
+  await User.findById(userId).select('transactionHistory');
+
 module.exports = {
   intializePaymentChannel,
   verifyTransactionStatus,
   storeTransaction,
   checkTransactionExists,
+  getUserTransactions,
 };
