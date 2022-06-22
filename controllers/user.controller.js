@@ -39,7 +39,11 @@ exports.deleteAccount = (req, res) => {
 
 exports.updateAccount = async (req, res) => {
   try {
-    const data = JSON.parse(req.fields.data);
+    const body = req.fields.data;
+
+    let data;
+    if (body) data = JSON.parse(body);
+
     const { image } = req.files;
 
     const user = await User.findOne({ _id: req.user._id })

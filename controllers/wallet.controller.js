@@ -6,6 +6,7 @@ const {
   verifyTransactionStatus,
   storeTransaction,
   checkTransactionExists,
+  getUserTransactions,
 } = require('../services/wallet');
 const { responseHandler } = require('../utils/responseHandler');
 
@@ -80,7 +81,32 @@ const verifyPayment = async (req, res) => {
   );
 };
 
+const getTransactionHistory = async (req, res) => {
+  try {
+    const transactionHistory = await getUserTransactions(req.user._id);
+    if (transactionHistory) {
+      return responseHandler(
+        res,
+        'User transactions retrieved succesfully',
+        200,
+        false,
+        transactionHistory
+      );
+    }
+    return responseHandler(
+      res,
+      'User currently has no transactions',
+      200,
+      false,
+      transactionHistory
+    );
+  } catch (error) {
+    return responseHandler(res, 'An error occured. Try again', 500, true, '');
+  }
+};
+
 module.exports = {
   intializePayment,
   verifyPayment,
+  getTransactionHistory,
 };
