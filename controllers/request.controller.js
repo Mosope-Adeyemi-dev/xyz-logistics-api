@@ -17,10 +17,17 @@ exports.createRequest = async (req, res) => {
     } = req.body;
 
     const creatorId = req.user._id;
-    const package_id = `XYZ-${Math.random()
-      .toString(36)
-      .slice(2)
-      .toUpperCase()}`;
+
+    function randomString(length) {
+      return Math.round(
+        Math.pow(36, length + 1) - Math.random() * Math.pow(36, length)
+      )
+        .toString(36)
+        .slice(1)
+        .toUpperCase();
+    }
+
+    const package_id = `XYZ-${randomString(10)}`;
 
     const package = new Package({
       name,
